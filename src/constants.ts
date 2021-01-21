@@ -23,7 +23,7 @@ export enum Rounding {
 }
 
 // TODO: Need to change to luaswap's factory address
-export const FACTORY_ADDRESS = '0x6203F5723758bFb32d139D39176047A214e3C486'
+export const FACTORY_ADDRESS = '0xBf8e4237676531dB334f14E4beB9FD61d9fb32B1'
 
 // TODO: Need to change every code smartcontract updated
 export const INIT_CODE_HASH = '0x872fdad11a7bd0b3d4be7031fca9537ce03e1cc0aa4f232aea1a27271351a8a9'
