@@ -1,7 +1,7 @@
 import { ChainId, WETH, Token, Fetcher } from '../src'
 
 // TODO: replace the provider in these tests
-describe.skip('data', () => {
+describe('data', () => {
   it('Token', async () => {
     const token = await Fetcher.fetchTokenData(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F') // DAI
     expect(token.decimals).toEqual(18)
@@ -13,8 +13,8 @@ describe.skip('data', () => {
   })
 
   it('Pair', async () => {
-    const token = new Token(ChainId.RINKEBY, '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735', 18) // DAI
-    const pair = await Fetcher.fetchPairData(WETH[ChainId.RINKEBY], token)
-    expect(pair.liquidityToken.address).toEqual('0x8B22F85d0c844Cf793690F6D9DFE9F11Ddb35449')
+    const token = new Token(ChainId.ROPSTEN, '0xaD6D458402F60fD3Bd25163575031ACDce07538D', 18) // DAI
+    const pair = await Fetcher.fetchPairData(WETH[ChainId.ROPSTEN], token)
+    expect(pair.liquidityToken.address).toEqual('0x9272b8a0618080842c589442d3AFC6daFe4020d7')
   })
 })
