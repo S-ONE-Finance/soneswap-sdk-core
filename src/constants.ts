@@ -31,7 +31,7 @@ export const FACTORY_ADDRESS: { [chainId: number]: string } = {
 // sone not support mainnet yet
 export const INIT_CODE_HASH: { [chainId: number]: string } = {
   [ChainId.MAINNET]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f', // uniswap
-  [ChainId.ROPSTEN]: '0xebd0275f2905de8ace436e826d3795abe3d6abd9055ecc0278b21a46c7a0e5ae'
+  [ChainId.ROPSTEN]: '0x2b0025faa2cfbb39351172938fee77d7b90bf0a056e74560c71624dd90474826'
 }
 
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
