@@ -230,4 +230,12 @@ export class Pair {
       JSBI.divide(JSBI.multiply(liquidity.raw, this.reserveOf(token).raw), totalSupplyAdjusted.raw)
     )
   }
+
+  public getAmountsAddOneToken(amountToken: TokenAmount): [TokenAmount, TokenAmount] {
+    invariant(this.involvesToken(amountToken.token), 'TOKEN')
+    const amountSwap = JSBI.divide(amountToken.raw, JSBI.BigInt('2'))
+    const tokenAmountSwap = new TokenAmount(amountToken.token, amountSwap)
+    const [amountOut] = this.getOutputAmount(tokenAmountSwap)
+    return [new TokenAmount(amountToken.token, amountSwap), amountOut]
+  }
 }
