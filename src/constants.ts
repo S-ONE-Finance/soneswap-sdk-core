@@ -25,7 +25,7 @@ export enum Rounding {
 // sone not support mainnet yet
 export const FACTORY_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MAINNET]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // uniswap
-  [ChainId.ROPSTEN]: '0xda128223f811e6fd910e99d232a6ed58a59a5e5a2d69eac23b57eff0a5ade634'
+  [ChainId.ROPSTEN]: '0xB6EF230f01008e04b83E61807ed710F5BABc8Ddd'
 }
 
 // sone not support mainnet yet
