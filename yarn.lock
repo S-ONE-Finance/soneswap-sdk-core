@@ -2762,10 +2762,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@s-one-finance/core@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@s-one-finance/core/-/core-0.0.5.tgz#4188ceaf77388dbdbfed916505c0d396bd0f53b3"
-  integrity sha512-FqJaZqnY+2gD3XhTNSJT+hqQ1xj5XWOI5Vw3PDN5+zl/LLpFROjjP4T+sDEB+I0NxZLTbb2R97WQ/4kDt1nR3A==
+"@s-one-finance/core@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@s-one-finance/core/-/core-0.0.6.tgz#3f02a43f5ae679dff4c4ba8ddd7d48c9df7c6f64"
+  integrity sha512-BTt2yp4guizMLN2weqVja8jYZuvyAyznYx9yVmEUhAjWmDjIKrhhfxxNI4TAojpb16VIQ5xhatvzKZGauveeVw==
   dependencies:
     "@openzeppelin/contracts" "^3.1.0"
     "@openzeppelin/test-helpers" "^0.5.11"
