@@ -22,9 +22,17 @@ export enum Rounding {
   ROUND_UP
 }
 
-export const FACTORY_ADDRESS = '0x8c858B03779eA4DFD8C9135Cc2C4663dDFBb0DF3'
+// sone not support mainnet yet
+export const FACTORY_ADDRESS: { [chainId: number]: string } = {
+  [ChainId.MAINNET]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // uniswap
+  [ChainId.ROPSTEN]: '0xda128223f811e6fd910e99d232a6ed58a59a5e5a2d69eac23b57eff0a5ade634'
+}
 
-export const INIT_CODE_HASH = '0xebd0275f2905de8ace436e826d3795abe3d6abd9055ecc0278b21a46c7a0e5ae'
+// sone not support mainnet yet
+export const INIT_CODE_HASH: { [chainId: number]: string } = {
+  [ChainId.MAINNET]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f', // uniswap
+  [ChainId.ROPSTEN]: '0x2b0025faa2cfbb39351172938fee77d7b90bf0a056e74560c71624dd90474826'
+}
 
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
 

@@ -28,6 +28,11 @@ export class Pair {
   private readonly tokenAmounts: [TokenAmount, TokenAmount]
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
+    if (tokenA.chainId !== tokenB.chainId) {
+      throw new Error('Different chainId of tokenA and tokenB')
+    }
+
+    const chainId = tokenA.chainId && tokenB.chainId
     const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
     if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
@@ -36,9 +41,9 @@ export class Pair {
         [tokens[0].address]: {
           ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
           [tokens[1].address]: getCreate2Address(
-            FACTORY_ADDRESS,
+            FACTORY_ADDRESS[chainId],
             keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
-            INIT_CODE_HASH
+            INIT_CODE_HASH[chainId]
           )
         }
       }
@@ -224,5 +229,13 @@ export class Pair {
       token,
       JSBI.divide(JSBI.multiply(liquidity.raw, this.reserveOf(token).raw), totalSupplyAdjusted.raw)
     )
+  }
+
+  public getAmountsAddOneToken(amountToken: TokenAmount): [TokenAmount, TokenAmount] {
+    invariant(this.involvesToken(amountToken.token), 'TOKEN')
+    const amountSwap = JSBI.divide(amountToken.raw, JSBI.BigInt('2'))
+    const tokenAmountSwap = new TokenAmount(amountToken.token, amountSwap)
+    const [amountOut] = this.getOutputAmount(tokenAmountSwap)
+    return [new TokenAmount(amountToken.token, amountSwap), amountOut]
   }
 }

@@ -117,4 +117,11 @@ describe('Pair', () => {
       new Pair(new TokenAmount(USDC, '100'), new TokenAmount(DAI, '100')).involvesToken(WETH[ChainId.ROPSTEN])
     ).toEqual(false)
   })
+
+  describe('#getAmountsAddOneToken', () => {
+    const pair = new Pair(new TokenAmount(USDC, '1000000'), new TokenAmount(DAI, '1000000'))
+    const [a, b] = pair.getAmountsAddOneToken(new TokenAmount(USDC, '2000'))
+    expect(a.toExact()).toEqual('0.000000000000000996') // *1e18 = 996
+    expect(b.toExact()).toEqual('0.000000000000001') // *1e18 = 1000
+  })
 })
