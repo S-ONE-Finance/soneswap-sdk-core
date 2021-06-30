@@ -1,0 +1,15 @@
+image: node:latest
+stages:
+  - deploy
+
+deploy:
+  tags:
+    - sdk
+  stage: deploy
+  environment: develop
+  only:
+    - develop
+  script:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+    - npm install
+    - NPM_TOKEN=${NPM_TOKEN} npm publish
