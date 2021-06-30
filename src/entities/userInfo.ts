@@ -44,4 +44,8 @@ export class UserInfo {
     const soneMintValueUSD = JSBI.multiply(sonePrice, soneMint)
     return JSBI.divide(JSBI.multiply(soneMintValueUSD, JSBI.BigInt(100)), stakedValueUSD)
   }
+
+  public getRemainStakedValueAfterUnstake(unstakedValue: JSBI) : JSBI {
+    return JSBI.subtract(this.amount, unstakedValue)
+  }
 }
