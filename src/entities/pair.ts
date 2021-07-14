@@ -243,7 +243,7 @@ export class Pair {
    * 
    * @param inputAmount 
    * @param slippage 
-   * @returns [selectedTokenInputAmount: JSBI, selectedAmountMin: JSBI, theOtherAmountMin: JSBI, theOtherOutputMin: JSBI]
+   * @returns [selectedTokenInputAmount: JSBI, selectedAmountMin: JSBI, theOtherAmountMin: JSBI, theOtherOutputAmountMin: JSBI]
    */
   public getAmountsAddOneToken(inputAmount: TokenAmount, slippage: number): [JSBI, JSBI, JSBI, JSBI] {
     invariant(this.involvesToken(inputAmount.token), 'TOKEN')
@@ -257,25 +257,37 @@ export class Pair {
     const theOtherToken = inputAmount.token.equals(this.token0) ? this.token1 : this.token0
 
     // Reverses
-    const selectedInputReserve = this.reserveOf(inputAmount.token)
-    const theOtherInputReserve = this.reserveOf(theOtherToken)
+    const selectedTokenReserve = this.reserveOf(inputAmount.token)
+    const theOtherTokenReserve = this.reserveOf(theOtherToken)
     
-    // [selectedInputAmount/2, theOtherOutputDesired]
-    const [selectedAmountDesired, theOtherOutputDesired] = this.getAmountsOutAddOneToken(inputAmount)
+    // [selectedInputAmount/2, theOtherOutputAmountDesired]
+    const [selectedAmountDesired, theOtherOutputAmountDesired] = this.getAmountsOutAddOneToken(inputAmount)
     
-    const theOtherOutputMin = JSBI.divide(JSBI.multiply(theOtherOutputDesired.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
+    // theOtherOutputAmountMin with slippage
+    const theOtherOutputMin = JSBI.divide(JSBI.multiply(theOtherOutputAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     const theOtherOutputAmountMin = new TokenAmount(theOtherToken, theOtherOutputMin)
     
-    // Calculate theOtherAmountDesired = Min[theOtherAmountDesired1, theOtherAmounDesired2]
-    const theOtherAmountDesired1 = selectedAmountDesired.multiply(theOtherInputReserve.subtract(theOtherOutputDesired))
-      .divide(selectedInputReserve.add(selectedInputReserve))
-    const theOtherAmounDesired2 = selectedAmountDesired.multiply(theOtherInputReserve.subtract(theOtherOutputAmountMin))
-      .divide(selectedInputReserve.add(selectedInputReserve))
-    const theOtherAmountDesired = theOtherAmountDesired1.greaterThan(theOtherAmounDesired2) ? theOtherAmounDesired2 : theOtherAmountDesired1
-    
+    /** Calculate theOtherAmountDesired
+     * Need [a/2; theOtherAmountDesired] ~  [selectedTokenReserve; theOtherTokenReserve] to add liquidity.
+     * 
+     * theOtherAmountDesired1 = (a/2)*(y - b_desired) / (x + (a/2))
+     *                        = selectedAmountDesired*(theOtherTokenReserve - theOtherOutputAmountDesired) / (selectedTokenReserve + selectedTokenReserve)
+     * theOtherAmountDesired2 = (a/2)*(y - b_min) / (x + (a/2))
+     *                        = selectedAmountDesired*(theOtherTokenReserve - theOtherOutputAmountMin) / (selectedTokenReserve + selectedTokenReserve)
+     * 
+     * => theOtherAmountDesired = Min[theOtherAmountDesired1, theOtherAmountDesired2]
+     */
+    const theOtherAmountDesired1 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountDesired))
+      .divide(selectedTokenReserve.add(selectedTokenReserve))
+    const theOtherAmountDesired2 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountMin))
+      .divide(selectedTokenReserve.add(selectedTokenReserve))
+
+    const theOtherAmountDesired = theOtherAmountDesired1.greaterThan(theOtherAmountDesired2) 
+      ? theOtherAmountDesired2.multiply(JSBI.BigInt(1e18)) : theOtherAmountDesired1.multiply(JSBI.BigInt(1e18))
+
     const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     const theOtherAmountMin = JSBI.divide(JSBI.multiply(theOtherAmountDesired.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
 
-    return [selectedAmountDesired.raw, selectedAmountMin, theOtherAmountMin, theOtherOutputMin]
+    return [inputAmount.raw, selectedAmountMin, theOtherAmountMin, theOtherOutputMin]
   }
 }
