@@ -239,7 +239,8 @@ export class Pair {
     return [new TokenAmount(inputAmount.token, amountSwap), amountOut]
   }
 
-  public getAmountsAddOneToken(inputAmount: TokenAmount, slippage: number): [JSBI, JSBI, JSBI, JSBI] {
+  public getAmountsAddOneToken(inputAmount: TokenAmount, slippage: number): 
+    [selectedTokenInputAmount: JSBI, selectedAmountMin: JSBI, theOtherAmountMin: JSBI, theOtherOutputMin: JSBI] {
     invariant(this.involvesToken(inputAmount.token), 'TOKEN')
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO)) {
       throw new InsufficientReservesError()
@@ -270,6 +271,6 @@ export class Pair {
     const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     const theOtherAmountMin = JSBI.divide(JSBI.multiply(theOtherAmountDesired.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
 
-    return [selectedAmountDesired.raw, theOtherAmountDesired.quotient, selectedAmountMin, theOtherAmountMin]
+    return [selectedAmountDesired.raw, selectedAmountMin, theOtherAmountMin, theOtherOutputMin]
   }
 }
