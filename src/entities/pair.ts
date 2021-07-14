@@ -239,8 +239,13 @@ export class Pair {
     return [new TokenAmount(inputAmount.token, amountSwap), amountOut]
   }
 
-  public getAmountsAddOneToken(inputAmount: TokenAmount, slippage: number): 
-    [selectedTokenInputAmount: JSBI, selectedAmountMin: JSBI, theOtherAmountMin: JSBI, theOtherOutputMin: JSBI] {
+  /**
+   * 
+   * @param inputAmount 
+   * @param slippage 
+   * @returns [selectedTokenInputAmount: JSBI, selectedAmountMin: JSBI, theOtherAmountMin: JSBI, theOtherOutputMin: JSBI]
+   */
+  public getAmountsAddOneToken(inputAmount: TokenAmount, slippage: number): [JSBI, JSBI, JSBI, JSBI] {
     invariant(this.involvesToken(inputAmount.token), 'TOKEN')
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO)) {
       throw new InsufficientReservesError()
