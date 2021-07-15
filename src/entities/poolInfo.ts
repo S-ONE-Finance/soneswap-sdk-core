@@ -1,18 +1,10 @@
-import JSBI from 'jsbi'
-
+import { Farm } from 'interfaces'
 export class PoolInfo {
-  public readonly totalStakedValue: JSBI
-  public readonly rewardPerBlock: JSBI
-  public readonly poolWeight: JSBI
+  public readonly pool: Farm
 
   public constructor(
-      totalStakedValue: JSBI, 
-      rewardPerBlock: JSBI,
-      poolWeight: JSBI,
+      pool_: Farm, 
     ) {
-    this.totalStakedValue = totalStakedValue
-    this.rewardPerBlock = rewardPerBlock
-    this.poolWeight = poolWeight
+    this.pool = pool_
   }
-
 }

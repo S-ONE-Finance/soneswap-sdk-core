@@ -58,3 +58,6 @@ export const SOLIDITY_TYPE_MAXIMA = {
   [SolidityType.uint8]: JSBI.BigInt('0xff'),
   [SolidityType.uint256]: JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
 }
+
+export const REWARD_MULTIPLIER = [32, 32, 32, 32, 16, 8, 4, 2, 1]
+export const START_REWARD = '01/11/2021'
