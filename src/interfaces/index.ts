@@ -53,15 +53,14 @@ export interface Farm extends BaseDataSushi {
   liquidityPair: LiquidityPair
   rewardPerBlock: number
   roiPerBlock: number
-  roiPerHour: number
-  roiPerDay: number
-  roiPerMonth: number
   roiPerYear: number
-  rewardPerThousand: number
   tvl: number
   sushiHarvested: number
   multiplier: number
   balanceUSD: number
+  sushiPrice: number
+  LPTokenPrice: number
+  secondsPerBlock: number
 }
 
 export interface MyStaked extends BaseDataSushi {

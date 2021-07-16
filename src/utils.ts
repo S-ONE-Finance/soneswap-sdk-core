@@ -3,7 +3,7 @@ import warning from 'tiny-warning'
 import JSBI from 'jsbi'
 import { getAddress } from '@ethersproject/address'
 
-import { BigintIsh, ZERO, ONE, TWO, THREE, SolidityType, SOLIDITY_TYPE_MAXIMA } from './constants'
+import { BigintIsh, ZERO, ONE, TWO, THREE, SolidityType, SOLIDITY_TYPE_MAXIMA, START_REWARD_BLOCK, REWARD_MULTIPLIER } from './constants'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
   invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
@@ -81,4 +81,49 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
   }
 }
 
+export function calculateAPY(secondsPerBlock: number, blockCurrent: number): number {
+  // define halvingAtBlocks
+  const blocksPerWeek = JSBI.BigInt(Math.trunc((24 * 7 * 3600) / secondsPerBlock))
+  const rewardMultiplier = REWARD_MULTIPLIER
+  const startAtBlock = JSBI.BigInt(START_REWARD_BLOCK)
+  const halvingAtBlocks: JSBI[] = []
+  for (let i = 0; i < rewardMultiplier.length - 1; i++) {
+    const halvingAtBlock = JSBI.add(JSBI.multiply(blocksPerWeek, JSBI.BigInt(i + 1)), startAtBlock)
+    halvingAtBlocks.push(halvingAtBlock)
+  }
+  halvingAtBlocks.push(SOLIDITY_TYPE_MAXIMA[SolidityType.uint256])
+  // get multiplier
+  const blockAfterYear = JSBI.add(JSBI.BigInt(blockCurrent), JSBI.BigInt(Math.trunc((365 * 24 * 3600) / secondsPerBlock)))
+  const multiplier = getMultiplierInYear(
+    startAtBlock,
+    JSBI.BigInt(blockCurrent),
+    blockAfterYear,
+    rewardMultiplier,
+    halvingAtBlocks
+  )
+  return JSBI.toNumber(multiplier)
+}
 
+function getMultiplierInYear(
+  startAtBlock: JSBI,
+  blockCurrent: JSBI,
+  blockAfterYear: JSBI,
+  rewardMultiplier: number[],
+  halvingAtBlocks: JSBI[]
+): JSBI {
+  let result: JSBI = ZERO
+  if (JSBI.lessThan(blockCurrent, startAtBlock)) return ZERO
+  for (let i = 0; i < halvingAtBlocks.length; i++) {
+    const endBlock = halvingAtBlocks[i];
+    if (JSBI.lessThanOrEqual(blockAfterYear, endBlock)) {
+      let m = JSBI.multiply(JSBI.subtract(blockAfterYear, blockCurrent), JSBI.BigInt(rewardMultiplier[i]))
+      return JSBI.add(result, m)
+    }
+    if (JSBI.lessThan(blockCurrent, endBlock)) {
+      const m =  JSBI.multiply(JSBI.subtract(endBlock, blockCurrent), JSBI.BigInt(rewardMultiplier[i]))
+      blockCurrent = endBlock;
+      result = JSBI.add(result, m)
+    }
+  }
+  return result
+}

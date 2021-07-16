@@ -60,4 +60,4 @@ export const SOLIDITY_TYPE_MAXIMA = {
 }
 
 export const REWARD_MULTIPLIER = [32, 32, 32, 32, 16, 8, 4, 2, 1]
-export const START_REWARD = '01/11/2021'
+export const START_REWARD_BLOCK = 13546394 // Blocker number 13546394 (on mainnet) ~ 2021-11-1 00:00 +08 timezone
