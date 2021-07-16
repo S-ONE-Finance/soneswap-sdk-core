@@ -26,15 +26,26 @@ export class UserInfo {
     return (multiplierYear * rewardForUser).toString()
   }
 
+  // public getAPYAfterStake(newValue: string, block: number): string {
+  //   const poolShare =
+  //     Number(newValue) / (Number(newValue) + Number(this.poolInfo.pool.balance))
+  //   const roiPerBlock =
+  //     (this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sushiPrice * poolShare) /
+  //     (Number(newValue) * this.poolInfo.pool.LPTokenPrice / 1e18) 
+  //   const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
+  //   return (multiplierYear * roiPerBlock).toString()
+  // }
+
   public getAPYAfterStake(newValue: string, block: number): string {
     const poolShare =
       (Number(newValue) + Number(this.user.amount)) / (Number(newValue) + Number(this.poolInfo.pool.balance))
     const roiPerBlock =
       (this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sushiPrice * poolShare) /
-      (Number(newValue) * this.poolInfo.pool.LPTokenPrice)
+      ((Number(newValue) + Number(this.user.amount)) * this.poolInfo.pool.LPTokenPrice / 1e18) 
     const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
     return (multiplierYear * roiPerBlock).toString()
   }
+
 
   // public getRemainStakedValueAfterUnstake(unstakedValue: JSBI) : JSBI {
   //   return JSBI.subtract(this.amount, unstakedValue)
