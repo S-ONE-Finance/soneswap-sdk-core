@@ -61,10 +61,10 @@ export interface Farm extends BaseDataSushi {
   sushiPrice: number
   LPTokenPrice: number
   secondsPerBlock: number
-  userInfo?: UserInfo
+  userInfo?: UserInfoSushi
 }
 
-export interface UserInfo extends BaseDataSushi {
+export interface UserInfoSushi extends BaseDataSushi {
   address: string
   amount: string
   entryUSD: string
