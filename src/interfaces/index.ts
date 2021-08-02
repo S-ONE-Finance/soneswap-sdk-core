@@ -11,6 +11,7 @@ interface Owner extends BaseDataSushi {
 interface Token extends BaseDataSushi {
   name: string
   symbol: string
+  decimals: string
   totalSupply: string
   derivedETH: string
 }
