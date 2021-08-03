@@ -1,51 +1,48 @@
-import JSBI from 'jsbi'
+import { UserInfoSushi as UserInfoInterface } from '../interfaces'
+import BigNumber from 'bignumber.js'
+import { calculateAPY } from '../utils'
 import { PoolInfo } from './poolInfo'
 
 export class UserInfo {
   public readonly poolInfo: PoolInfo
-  public readonly amount: JSBI
+  public readonly user: UserInfoInterface
 
-  public constructor(
-    poolInfo: PoolInfo, 
-    amount: JSBI
-  ) {
-    this.poolInfo = poolInfo
-    this.amount = amount
-  }
-  
-  public getTotalStakedValueAfterStake(stakedValue: JSBI) : JSBI {
-    return JSBI.add(this.amount, stakedValue)
+  public constructor(poolInfo_: PoolInfo, user_: UserInfoInterface) {
+    this.poolInfo = poolInfo_
+    this.user = user_
   }
 
-  public getEarnedRewardAfterStake(
-    multiplier: JSBI,
-    rewardPerBlock: JSBI,
-    stakedValue: JSBI
-  ) : JSBI {
-    const rewardPerYear = JSBI.multiply(multiplier, rewardPerBlock)
-    const soneMint = JSBI.divide(JSBI.multiply(rewardPerYear , this.poolInfo.poolWeight), JSBI.BigInt(100))
-    return JSBI.divide(
-      JSBI.multiply(soneMint, JSBI.add(this.amount, stakedValue)),
-      JSBI.add(this.poolInfo.totalStakedValue, stakedValue)
-    )
+  public getTotalStakedValueAfterStake(newValue: string): string {
+    const stakedValue = new BigNumber(this.user.amount)
+    const newStakedValue = new BigNumber(newValue)
+    return stakedValue.plus(newStakedValue).toString()
   }
 
-  public getAPYAfterStake(
-    sonePrice: JSBI,
-    multiplier: JSBI,
-    rewardPerBlock: JSBI,
-    currentUSDValue: JSBI,
-    stakedValue: JSBI
-  ) : JSBI {
-    const rewardPerYear = JSBI.multiply(multiplier, rewardPerBlock)
-    const soneMint = JSBI.divide(JSBI.multiply(rewardPerYear, this.poolInfo.poolWeight), JSBI.BigInt(100))
-    const valueUSDPerLPToken = JSBI.divide(currentUSDValue, this.poolInfo.totalStakedValue)
-    const stakedValueUSD = JSBI.multiply(JSBI.add(this.poolInfo.totalStakedValue, stakedValue), valueUSDPerLPToken)
-    const soneMintValueUSD = JSBI.multiply(sonePrice, soneMint)
-    return JSBI.divide(JSBI.multiply(soneMintValueUSD, JSBI.BigInt(100)), stakedValueUSD)
+  public getEarnedRewardAfterStake(newValue: string, block: number): string {
+    const poolShare = (new BigNumber(newValue).plus(new BigNumber(this.user.amount))).div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
+    const rewardForUser = new BigNumber(this.poolInfo.pool.rewardPerBlock).div(poolShare)
+    const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
+    return (multiplierYear * rewardForUser.toNumber()).toString()
   }
 
-  public getRemainStakedValueAfterUnstake(unstakedValue: JSBI) : JSBI {
-    return JSBI.subtract(this.amount, unstakedValue)
+  public getAPYAfterStake(newValue: string, block: number): string {
+    const poolShare = (new BigNumber(newValue).plus(new BigNumber(this.user.amount))).div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
+    const interestValue = new BigNumber(this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sushiPrice * poolShare.toNumber())
+    const investValue = (new BigNumber(newValue).plus(new BigNumber(this.user.amount))).times(new BigNumber(this.poolInfo.pool.LPTokenPrice)).div(new BigNumber(1e18))
+    const roiPerBlock = interestValue.toNumber() / investValue.toNumber()
+    const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
+    return (multiplierYear * roiPerBlock).toString()
+  }
+
+  public getTotalLPTokenAfterUnstake(currentLPToken: string, newValue: string): string {
+    const currentLPTokenValue = new BigNumber(currentLPToken)
+    const newUnstakedValue = new BigNumber(newValue)
+    return currentLPTokenValue.plus(newUnstakedValue).toString()
+  }
+
+  public getRemainStakedValueAfterUnstake(newValue: string): string {
+    const stakedValue = new BigNumber(this.user.amount)
+    const newUnstakedValue = new BigNumber(newValue)
+    return stakedValue.minus(newUnstakedValue).toString()
   }
 }
