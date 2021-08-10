@@ -1,14 +1,14 @@
-interface BaseDataSushi {
+interface BaseDataSone {
   __typename: string
   id: string
 }
 
-interface Owner extends BaseDataSushi {
-  sushiPerBlock: number
+interface Owner extends BaseDataSone {
+  sonePerBlock: number
   totalAllocPoint: number
 }
 
-interface Token extends BaseDataSushi {
+interface Token extends BaseDataSone {
   name: string
   symbol: string
   decimals: string
@@ -16,7 +16,7 @@ interface Token extends BaseDataSushi {
   derivedETH: string
 }
 
-interface LiquidityPair extends BaseDataSushi {
+interface LiquidityPair extends BaseDataSone {
   reserveUSD: string
   reserveETH: string
   volumeUSD: string
@@ -33,13 +33,13 @@ interface LiquidityPair extends BaseDataSushi {
   timestamp: string
 }
 
-interface Pair extends BaseDataSushi {}
-interface User extends BaseDataSushi {}
-export interface Farm extends BaseDataSushi {
+interface Pair extends BaseDataSone {}
+interface User extends BaseDataSone {}
+export interface Farm extends BaseDataSone {
   pair: string
   allocPoint: string
   lastRewardBlock: string
-  accSushiPerShare: string
+  accSonePerShare: string
   balance: string
   userCount: string
   owner: Owner
@@ -50,33 +50,33 @@ export interface Farm extends BaseDataSushi {
   pid: number
   pairAddress: string
   slpBalance: string
-  sushiRewardPerDay: number
+  soneRewardPerDay: number
   liquidityPair: LiquidityPair
   rewardPerBlock: number
   roiPerBlock: number
   roiPerYear: number
   tvl: number
-  sushiHarvested: number
+  soneHarvested: number
   multiplier: number
   balanceUSD: number
-  sushiPrice: number
+  sonePrice: number
   LPTokenPrice: number
   secondsPerBlock: number
-  userInfo?: UserInfoSushi
+  userInfo?: UserInfoSone
 }
 
-export interface UserInfoSushi extends BaseDataSushi {
+export interface UserInfoSone extends BaseDataSone {
   address: string
   amount: string
   entryUSD: string
   exitUSD: string
   pool?: Farm
   rewardDebt: string
-  sushiHarvested: string
-  sushiHarvestedUSD: string
+  soneHarvested: string
+  soneHarvestedUSD: string
 }
 
-export interface LiquidityPosition extends BaseDataSushi {
+export interface LiquidityPosition extends BaseDataSone {
   liquidityTokenBalance: string
   pair: Pair
   user: User
