@@ -1,4 +1,4 @@
-import { UserInfoSushi as UserInfoInterface } from '../interfaces'
+import { UserInfoSone as UserInfoInterface } from '../interfaces'
 import BigNumber from 'bignumber.js'
 import { calculateAPY } from '../utils'
 import { PoolInfo } from './poolInfo'
@@ -19,16 +19,25 @@ export class UserInfo {
   }
 
   public getEarnedRewardAfterStake(newValue: string, block: number): string {
-    const poolShare = (new BigNumber(newValue).plus(new BigNumber(this.user.amount))).div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
+    const poolShare = new BigNumber(newValue)
+      .plus(new BigNumber(this.user.amount))
+      .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
     const rewardForUser = new BigNumber(this.poolInfo.pool.rewardPerBlock).div(poolShare)
     const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
     return (multiplierYear * rewardForUser.toNumber()).toString()
   }
 
   public getAPYAfterStake(newValue: string, block: number): string {
-    const poolShare = (new BigNumber(newValue).plus(new BigNumber(this.user.amount))).div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
-    const interestValue = new BigNumber(this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sushiPrice * poolShare.toNumber())
-    const investValue = (new BigNumber(newValue).plus(new BigNumber(this.user.amount))).times(new BigNumber(this.poolInfo.pool.LPTokenPrice)).div(new BigNumber(1e18))
+    const poolShare = new BigNumber(newValue)
+      .plus(new BigNumber(this.user.amount))
+      .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
+    const interestValue = new BigNumber(
+      this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sonePrice * poolShare.toNumber()
+    )
+    const investValue = new BigNumber(newValue)
+      .plus(new BigNumber(this.user.amount))
+      .times(new BigNumber(this.poolInfo.pool.LPTokenPrice))
+      .div(new BigNumber(1e18))
     const roiPerBlock = interestValue.toNumber() / investValue.toNumber()
     const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
     return (multiplierYear * roiPerBlock).toString()
