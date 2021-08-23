@@ -1270,10 +1270,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@s-one-finance/core@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@s-one-finance/core/-/core-0.1.2.tgz#eb119973fdb27ae62e10462985a8feb884b3b2a7"
-  integrity sha512-lqljc25HWeOqiH+Mx1KVCyOdnqnniown8cEIEm2c8yQteso7gFbqohUI1U59Xny008tI+FyaZUD4IF/kR5QO3A==
+"@s-one-finance/core@^2.0.0-rc1":
+  version "2.0.0-rc1"
+  resolved "https://registry.yarnpkg.com/@s-one-finance/core/-/core-2.0.0-rc1.tgz#cb25bef1c75571ae334f46324d414b3a1a3e122f"
+  integrity sha512-t/UIVMEkA0raLEe4XkpPPDrL03FZ2dmd9Vt2beWxhdaWbAwZPfGKgWthNExjM/7OxfIpjj9ng3de2xxic7JQfA==
 
 "@types/babel__core@^7.1.0":
   version "7.1.9"
