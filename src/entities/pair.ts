@@ -282,8 +282,9 @@ export class Pair {
     const theOtherAmountDesired2 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountMin))
       .divide(selectedTokenReserve.add(selectedTokenReserve))
 
+    const multiplier = 10 ** theOtherToken.decimals
     const theOtherAmountDesired = theOtherAmountDesired1.greaterThan(theOtherAmountDesired2) 
-      ? theOtherAmountDesired2.multiply(JSBI.BigInt(1e18)) : theOtherAmountDesired1.multiply(JSBI.BigInt(1e18))
+      ? theOtherAmountDesired2.multiply(JSBI.BigInt(multiplier)) : theOtherAmountDesired1.multiply(JSBI.BigInt(multiplier))
 
     const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     const theOtherAmountMin = JSBI.divide(JSBI.multiply(theOtherAmountDesired.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))

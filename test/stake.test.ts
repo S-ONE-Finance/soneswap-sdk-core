@@ -1,4 +1,4 @@
-import { PoolInfo, JSBI, UserInfoSushi } from '../src'
+import { PoolInfo, JSBI, UserInfoSone } from '../src'
 
 describe('Stake', () => {
   const poolInfo = new PoolInfo(JSBI.BigInt(1000), JSBI.BigInt(5), JSBI.BigInt(10))
