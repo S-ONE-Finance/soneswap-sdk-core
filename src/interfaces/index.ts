@@ -81,3 +81,9 @@ export interface LiquidityPosition extends BaseDataSone {
   pair: Pair
   user: User
 }
+
+export interface ConfigMasterFarmer {
+  rewardMultiplier: number[]
+  startBlock: number
+  blocksPerWeek: number
+}

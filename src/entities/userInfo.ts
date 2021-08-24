@@ -23,7 +23,7 @@ export class UserInfo {
       .plus(new BigNumber(this.user.amount))
       .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
     const rewardForUser = new BigNumber(this.poolInfo.pool.rewardPerBlock).div(poolShare)
-    const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
+    const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block, this.poolInfo.configMasterFarmer)
     return (multiplierYear * rewardForUser.toNumber()).toString()
   }
 
@@ -39,7 +39,7 @@ export class UserInfo {
       .times(new BigNumber(this.poolInfo.pool.LPTokenPrice))
       .div(new BigNumber(1e18))
     const roiPerBlock = interestValue.toNumber() / investValue.toNumber()
-    const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block)
+    const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block, this.poolInfo.configMasterFarmer)
     return (multiplierYear * roiPerBlock).toString()
   }
 

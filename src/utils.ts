@@ -3,7 +3,8 @@ import warning from 'tiny-warning'
 import JSBI from 'jsbi'
 import { getAddress } from '@ethersproject/address'
 
-import { BigintIsh, ZERO, ONE, TWO, THREE, SolidityType, SOLIDITY_TYPE_MAXIMA, START_REWARD_BLOCK, REWARD_MULTIPLIER } from './constants'
+import { BigintIsh, ZERO, ONE, TWO, THREE, SolidityType, SOLIDITY_TYPE_MAXIMA } from './constants'
+import { ConfigMasterFarmer } from 'interfaces'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
   invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
@@ -81,11 +82,11 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
   }
 }
 
-export function calculateAPY(secondsPerBlock: number, blockCurrent: number): number {
+export function calculateAPY(secondsPerBlock: number, blockCurrent: number, configMasterFarmer: ConfigMasterFarmer): number {
   // define halvingAtBlocks
-  const blocksPerWeek = JSBI.BigInt(Math.trunc((24 * 7 * 3600) / secondsPerBlock))
-  const rewardMultiplier = REWARD_MULTIPLIER
-  const startAtBlock = JSBI.BigInt(START_REWARD_BLOCK)
+  const blocksPerWeek = JSBI.BigInt(configMasterFarmer.blocksPerWeek)
+  const rewardMultiplier = configMasterFarmer.rewardMultiplier
+  const startAtBlock = JSBI.BigInt(configMasterFarmer.startBlock)
   const halvingAtBlocks: JSBI[] = []
   for (let i = 0; i < rewardMultiplier.length - 1; i++) {
     const halvingAtBlock = JSBI.add(JSBI.multiply(blocksPerWeek, JSBI.BigInt(i + 1)), startAtBlock)
