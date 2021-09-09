@@ -13,14 +13,14 @@ export class UserInfo {
   }
 
   public getTotalStakedValueAfterStake(newValue: string): string {
-    const stakedValue = new BigNumber(this.user.amount)
+    const stakedValue = new BigNumber(this.user.amount ?? '0')
     const newStakedValue = new BigNumber(newValue)
     return stakedValue.plus(newStakedValue).toString()
   }
 
   public getEarnedRewardAfterStake(newValue: string, block: number): string {
     const poolShare = new BigNumber(newValue)
-      .plus(new BigNumber(this.user.amount))
+      .plus(new BigNumber(this.user.amount ?? '0'))
       .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
     const rewardForUser = new BigNumber(this.poolInfo.pool.rewardPerBlock).div(poolShare)
     const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block, this.poolInfo.configMasterFarmer)
@@ -29,13 +29,13 @@ export class UserInfo {
 
   public getAPYAfterStake(newValue: string, block: number): string {
     const poolShare = new BigNumber(newValue)
-      .plus(new BigNumber(this.user.amount))
+      .plus(new BigNumber(this.user.amount ?? '0'))
       .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
     const interestValue = new BigNumber(
       this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sonePrice * poolShare.toNumber()
     )
     const investValue = new BigNumber(newValue)
-      .plus(new BigNumber(this.user.amount))
+      .plus(new BigNumber(this.user.amount ?? '0'))
       .times(new BigNumber(this.poolInfo.pool.LPTokenPrice))
       .div(new BigNumber(1e18))
     const roiPerBlock = interestValue.toNumber() / investValue.toNumber()
@@ -50,7 +50,7 @@ export class UserInfo {
   }
 
   public getRemainStakedValueAfterUnstake(newValue: string): string {
-    const stakedValue = new BigNumber(this.user.amount)
+    const stakedValue = new BigNumber(this.user.amount ?? '0')
     const newUnstakedValue = new BigNumber(newValue)
     return stakedValue.minus(newUnstakedValue).toString()
   }
