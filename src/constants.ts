@@ -25,12 +25,14 @@ export enum Rounding {
 // sone not support mainnet yet
 export const FACTORY_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MAINNET]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // uniswap
-  [ChainId.ROPSTEN]: '0x16373A406828Bf5d3dDF071FC24b682E9057b9A5'  // soneswap [ropsten]
+  [ChainId.RINKEBY]: '0x59863261650e93605fCD7795C97E0d7968842808',
+  [ChainId.ROPSTEN]: '0x16373A406828Bf5d3dDF071FC24b682E9057b9A5' // soneswap [ropsten]
 }
 
 // sone not support mainnet yet
 export const INIT_CODE_HASH: { [chainId: number]: string } = {
   [ChainId.MAINNET]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f', // uniswap
+  [ChainId.RINKEBY]: '0x99278221a7bcd3d92b5a8a409be72655213d9ce3d456c214fb51a66992de5a0b',
   [ChainId.ROPSTEN]: '0x99278221a7bcd3d92b5a8a409be72655213d9ce3d456c214fb51a66992de5a0b'
 }
 
