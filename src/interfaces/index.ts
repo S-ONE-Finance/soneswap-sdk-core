@@ -73,7 +73,6 @@ export interface UserInfoSone extends BaseDataSone {
   pool?: Farm
   rewardDebt: string
   soneHarvested: string
-  soneHarvestedUSD: string
 }
 
 export interface LiquidityPosition extends BaseDataSone {
