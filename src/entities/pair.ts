@@ -309,7 +309,8 @@ export class Pair {
     console.log('=---------------')
 
 
-    const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedTokenDesiredAfterSwap, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
+    // const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedTokenDesiredAfterSwap, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
+    const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     console.log('selectedAmountMin', selectedAmountMin.toString()) // 497500000000000 - 497143827800002
     const theOtherAmountMin = JSBI.divide(JSBI.multiply(theOtherAmountDesired.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     console.log('theOtherAmountMin', theOtherAmountMin.toString()) // 156
