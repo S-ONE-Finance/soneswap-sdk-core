@@ -258,7 +258,8 @@ export class Pair {
     // Reverses
     const selectedTokenReserve = this.reserveOf(inputAmount.token)
     const theOtherTokenReserve = this.reserveOf(theOtherToken)
-    console.log('selectedTokenReserve', selectedTokenReserve.raw.toString())
+    console.log('selectedTokenReserve', selectedTokenReserve.raw.toString()) // 4630769599226545712
+    console.log('theOtherTokenReserve', theOtherTokenReserve.raw.toString()) // 2916144
     
     // [selectedInputAmount/2, theOtherOutputAmountDesired]
     const [selectedAmountDesired, theOtherOutputAmountDesired] = this.getAmountsOutAddOneToken(inputAmount)
@@ -281,11 +282,11 @@ export class Pair {
      * => theOtherAmountDesired = Min[theOtherAmountDesired1, theOtherAmountDesired2]
      */
     const theOtherAmountDesired1 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountDesired))
-      .divide(selectedTokenReserve.add(selectedTokenReserve))
-    console.log('theOtherAmountDesired1', theOtherAmountDesired1.toFixed(18)) // 0.000000000000000157
+      .divide(selectedTokenReserve.add(selectedAmountDesired))
+    console.log('theOtherAmountDesired1', theOtherAmountDesired1.toFixed(18)) // 0.000000000000000157 - 0.000000000000000315
     const theOtherAmountDesired2 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountMin))
-      .divide(selectedTokenReserve.add(selectedTokenReserve))
-    console.log('theOtherAmountDesired2', theOtherAmountDesired2.toFixed(18)) // 0.000000000000000157
+      .divide(selectedTokenReserve.add(selectedAmountDesired))
+    console.log('theOtherAmountDesired2', theOtherAmountDesired2.toFixed(18)) // 0.000000000000000157 - 0.000000000000000315
 
     const multiplier = 10 ** theOtherToken.decimals
     console.log('multiplier', multiplier) // 1000000000000000000
