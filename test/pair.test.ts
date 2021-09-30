@@ -129,14 +129,12 @@ describe('Pair', () => {
   })
 
   describe('#getAmountsAddOneToken', () => {
-    it.only('b', () => {
+    it.only('check pair-SONE-UNI', () => {
       const pair = new Pair(new TokenAmount(UNI, '2916144'), new TokenAmount(SONE, '4630769599226545712'))
-      const inputAmount: TokenAmount = new TokenAmount(SONE, '1000000000000000')
+      const inputAmount: TokenAmount = new TokenAmount(SONE, '1000000000000000') // 0.001
       pair.getAmountsAddOneToken(inputAmount, 50)
       
       expect(true).toEqual(true)
-      // expect(a.toExact()).toEqual('0.000000000000000996') // *1e18 = 996
-      // expect(b.toExact()).toEqual('0.000000000000001') // *1e18 = 1000
    });
   })
 })

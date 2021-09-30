@@ -255,22 +255,17 @@ export class Pair {
     }
 
     const theOtherToken = inputAmount.token.equals(this.token0) ? this.token1 : this.token0
-    // Reverses
+    // Reverses before swap
     const selectedTokenReserve = this.reserveOf(inputAmount.token)
     const theOtherTokenReserve = this.reserveOf(theOtherToken)
-    console.log('selectedTokenReserve', selectedTokenReserve.raw.toString()) // 4630769599226545712
-    console.log('theOtherTokenReserve', theOtherTokenReserve.raw.toString()) // 2916144
-    
+
     // [selectedInputAmount/2, theOtherOutputAmountDesired]
     const [selectedAmountDesired, theOtherOutputAmountDesired] = this.getAmountsOutAddOneToken(inputAmount)
-    console.log('selectedAmountDesired', selectedAmountDesired.raw.toString()) // 500000000000000
-    console.log('theOtherOutputAmountDesired', theOtherOutputAmountDesired.raw.toString()) // 313
-    
+
     // theOtherOutputAmountMin with slippage
     const theOtherOutputMin = JSBI.divide(JSBI.multiply(theOtherOutputAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
     const theOtherOutputAmountMin = new TokenAmount(theOtherToken, theOtherOutputMin)
-    console.log('theOtherOutputMin', theOtherOutputMin.toString()) // 311
-    
+
     /** Calculate theOtherAmountDesired
      * Need [a/2; theOtherAmountDesired] ~  [selectedTokenReserve; theOtherTokenReserve] to add liquidity.
      * 
@@ -281,40 +276,48 @@ export class Pair {
      * 
      * => theOtherAmountDesired = Min[theOtherAmountDesired1, theOtherAmountDesired2]
      */
-    const theOtherAmountDesired1 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountDesired))
+    const theOtherAmountDesired1 = selectedAmountDesired
+      .multiply(theOtherTokenReserve.subtract(theOtherOutputAmountDesired))
       .divide(selectedTokenReserve.add(selectedAmountDesired))
-    console.log('theOtherAmountDesired1', theOtherAmountDesired1.toFixed(18)) // 0.000000000000000157 - 0.000000000000000315
-    const theOtherAmountDesired2 = selectedAmountDesired.multiply(theOtherTokenReserve.subtract(theOtherOutputAmountMin))
+    const theOtherAmountDesired2 = selectedAmountDesired
+      .multiply(theOtherTokenReserve.subtract(theOtherOutputAmountMin))
       .divide(selectedTokenReserve.add(selectedAmountDesired))
-    console.log('theOtherAmountDesired2', theOtherAmountDesired2.toFixed(18)) // 0.000000000000000157 - 0.000000000000000315
 
     const multiplier = 10 ** theOtherToken.decimals
-    console.log('multiplier', multiplier) // 1000000000000000000
-    const theOtherAmountDesired = theOtherAmountDesired1.greaterThan(theOtherAmountDesired2) 
-      ? theOtherAmountDesired2.multiply(JSBI.BigInt(multiplier)) : theOtherAmountDesired1.multiply(JSBI.BigInt(multiplier))
-    console.log('theOtherAmountDesired', theOtherAmountDesired.toFixed(18)) // 157.416112890123958557
+    let theOtherAmountDesired: JSBI
+    if (theOtherAmountDesired1.greaterThan(theOtherAmountDesired2)) {
+      theOtherAmountDesired = (theOtherAmountDesired2.multiply(JSBI.BigInt(multiplier))).quotient
+    } else {
+      theOtherAmountDesired = (theOtherAmountDesired1.multiply(JSBI.BigInt(multiplier))).quotient
+    }
 
-    // get new reserve after swap
+    // get Min[theOtherAmountDesired, theOtherOutputAmountDesired]
+    if (JSBI.greaterThan(theOtherAmountDesired, theOtherOutputAmountDesired.raw)) {
+      theOtherAmountDesired = theOtherOutputAmountDesired.raw
+    }
+
+    // get new reserve after swap with other output amount
     const reserveSelected = JSBI.add(selectedTokenReserve.raw, selectedAmountDesired.raw)
-    console.log('reserveSelected', reserveSelected.toString())
-    const reserveOtherToken = JSBI.subtract(theOtherTokenReserve.raw, theOtherOutputAmountDesired.raw)
-    console.log('reserveOtherToken', reserveOtherToken.toString())
+    const reserveDesiredOtherToken = JSBI.subtract(theOtherTokenReserve.raw, theOtherOutputAmountDesired.raw)
+    const reserveMinOtherToken = JSBI.subtract(theOtherTokenReserve.raw, theOtherOutputAmountMin.quotient)
 
-    console.log('=---------------')
-    console.log('theOtherAmountDesired', theOtherAmountDesired.quotient.toString())
-    console.log('reserveSelected', reserveSelected.toString())
-    console.log('reserveOtherToken', reserveOtherToken.toString())
     // selected token can add
-    const selectedTokenDesiredAfterSwap = JSBI.divide(JSBI.multiply(theOtherAmountDesired.quotient, reserveSelected), reserveOtherToken)
-    console.log('selectedTokenDesiredAfterSwap', selectedTokenDesiredAfterSwap.toString())
-    console.log('=---------------')
+    // Max[reserveDesiredOtherToken, reserveMinOtherToken]
+    let selectedTokenDesiredAfterSwap: JSBI
+    if (JSBI.greaterThan(reserveDesiredOtherToken, reserveMinOtherToken)) {
+      selectedTokenDesiredAfterSwap = JSBI.divide(
+        JSBI.multiply(theOtherAmountDesired, reserveSelected),
+        reserveDesiredOtherToken
+      )
+    } else {
+      selectedTokenDesiredAfterSwap = JSBI.divide(
+        JSBI.multiply(theOtherAmountDesired, reserveSelected),
+        reserveMinOtherToken
+      )
+    }
 
-
-    // const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedTokenDesiredAfterSwap, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
-    const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedAmountDesired.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
-    console.log('selectedAmountMin', selectedAmountMin.toString()) // 497500000000000 - 497143827800002
-    const theOtherAmountMin = JSBI.divide(JSBI.multiply(theOtherAmountDesired.quotient, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
-    console.log('theOtherAmountMin', theOtherAmountMin.toString()) // 156
+    const selectedAmountMin = JSBI.divide(JSBI.multiply(selectedTokenDesiredAfterSwap, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
+    const theOtherAmountMin = JSBI.divide(JSBI.multiply(theOtherAmountDesired, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000))
 
     return [inputAmount.raw, selectedAmountMin, theOtherAmountMin, theOtherOutputMin]
   }
