@@ -6,6 +6,9 @@ describe('Pair', () => {
   const USDC = new Token(ChainId.ROPSTEN, '0x07865c6E87B9F70255377e024ace6630C1Eaa37F', 18, 'USDC', 'USD Coin')
   const DAI = new Token(ChainId.ROPSTEN, '0xaD6D458402F60fD3Bd25163575031ACDce07538D', 18, 'DAI', 'DAI Stablecoin')
 
+  const UNI = new Token(ChainId.RINKEBY, '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', 18, 'UNI', 'Uniswap')
+  const SONE = new Token(ChainId.RINKEBY, '0x5fea1f4aef9c78bc56ced5083fb59d351396748f', 18, 'SONE', 'Soneswap')
+
   describe('constructor', () => {
     it('cannot be used for tokens on different chains', () => {
       expect(() => new Pair(new TokenAmount(USDC, '100'), new TokenAmount(WETH[ChainId.RINKEBY], '100'))).toThrow(
@@ -118,10 +121,20 @@ describe('Pair', () => {
     ).toEqual(false)
   })
 
-  describe('#getAmountsAddOneToken', () => {
+  describe('#getAmountsOutAddOneToken', () => {
     const pair = new Pair(new TokenAmount(USDC, '1000000'), new TokenAmount(DAI, '1000000'))
     const [a, b] = pair.getAmountsOutAddOneToken(new TokenAmount(USDC, '2000'))
     expect(a.toExact()).toEqual('0.000000000000000996') // *1e18 = 996
     expect(b.toExact()).toEqual('0.000000000000001') // *1e18 = 1000
+  })
+
+  describe('#getAmountsAddOneToken', () => {
+    it.only('check pair-SONE-UNI', () => {
+      const pair = new Pair(new TokenAmount(UNI, '2916144'), new TokenAmount(SONE, '4630769599226545712'))
+      const inputAmount: TokenAmount = new TokenAmount(SONE, '1000000000000000') // 0.001
+      pair.getAmountsAddOneToken(inputAmount, 50)
+      
+      expect(true).toEqual(true)
+   });
   })
 })
