@@ -13,8 +13,8 @@ describe('data', () => {
   })
 
   it('Pair', async () => {
-    const token = new Token(ChainId.ROPSTEN, '0xaD6D458402F60fD3Bd25163575031ACDce07538D', 18) // DAI
-    const pair = await Fetcher.fetchPairData(WETH[ChainId.ROPSTEN], token)
-    expect(pair.liquidityToken.address).toEqual('0x9272b8a0618080842c589442d3AFC6daFe4020d7')
+    const token = new Token(ChainId.RINKEBY, '0x4A732cEF0892afe9d7Fb021b67266595791B6c01', 18) // DAI
+    const pair = await Fetcher.fetchPairData(WETH[ChainId.RINKEBY], token)
+    expect(pair.liquidityToken.address).toEqual('0x6A5D071C0B91452507ce5eF261491a7c9019deE1')
   })
 })
