@@ -1,4 +1,4 @@
-import { ChainId, Token, Pair, TokenAmount, WETH, Price } from '../src'
+import { ChainId, Token, Pair, TokenAmount, WETH, Price, JSBI } from '../src'
 
 describe('Pair', () => {
   // const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 18, 'USDC', 'USD Coin')
@@ -19,7 +19,7 @@ describe('Pair', () => {
 
   describe('#getAddress', () => {
     it('returns the correct address', () => {
-      expect(Pair.getAddress(USDC, DAI)).toEqual('0xbFb810FcC02F767e579830E0f36c5707701f4eB7')
+      expect(Pair.getAddress(USDC, DAI)).toEqual('0x2e0aab7C49c635B53F8A2Dda6D3BCe02ebD84B1d')
     })
   })
 
@@ -121,20 +121,26 @@ describe('Pair', () => {
     ).toEqual(false)
   })
 
-  describe('#getAmountsOutAddOneToken', () => {
+  describe.only('#getAmountsOutAddOneToken', () => {
     const pair = new Pair(new TokenAmount(USDC, '1000000'), new TokenAmount(DAI, '1000000'))
     const [a, b] = pair.getAmountsOutAddOneToken(new TokenAmount(USDC, '2000'))
-    expect(a.toExact()).toEqual('0.000000000000000996') // *1e18 = 996
-    expect(b.toExact()).toEqual('0.000000000000001') // *1e18 = 1000
+    expect(a.toExact()).toEqual('0.000000000000001') // *1e18 = 1000
+    expect(b.toExact()).toEqual('0.000000000000000996') // *1e18 = 996
   })
 
   describe('#getAmountsAddOneToken', () => {
-    it.only('check pair-SONE-UNI', () => {
       const pair = new Pair(new TokenAmount(UNI, '2916144'), new TokenAmount(SONE, '4630769599226545712'))
       const inputAmount: TokenAmount = new TokenAmount(SONE, '1000000000000000') // 0.001
-      pair.getAmountsAddOneToken(inputAmount, 50)
-      
-      expect(true).toEqual(true)
-   });
+      const [
+        amountInput,
+        amountAMin,
+        amountBMin,
+        amountOutputMin
+      ] =  pair.getAmountsAddOneToken(inputAmount, 50)
+      // compare result with func getAmountsAddOneToken
+      expect(amountInput).toEqual(JSBI.BigInt(1000000000000000))
+      expect(amountAMin).toEqual(JSBI.BigInt(494605015265061))
+      expect(amountBMin).toEqual(JSBI.BigInt(311))
+      expect(amountOutputMin).toEqual(JSBI.BigInt(311))
   })
 })

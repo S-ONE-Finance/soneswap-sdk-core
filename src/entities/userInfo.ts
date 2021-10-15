@@ -2,6 +2,7 @@ import { UserInfoSone as UserInfoInterface } from '../interfaces'
 import BigNumber from 'bignumber.js'
 import { calculateAPY } from '../utils'
 import { PoolInfo } from './poolInfo'
+import invariant from 'tiny-invariant'
 
 export class UserInfo {
   public readonly poolInfo: PoolInfo
@@ -19,18 +20,20 @@ export class UserInfo {
   }
 
   public getEarnedRewardAfterStake(newValue: string, block: number): string {
+    invariant(+newValue !== 0, 'New value must > 0')
     const poolShare = new BigNumber(newValue)
       .plus(new BigNumber(this.user.amount ?? '0'))
-      .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
-    const rewardForUser = new BigNumber(this.poolInfo.pool.rewardPerBlock).div(poolShare)
+      .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.slpBalance)))
+    const rewardForUser = new BigNumber(this.poolInfo.pool.rewardPerBlock).times(poolShare)
     const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block, this.poolInfo.configMasterFarmer)
     return (multiplierYear * rewardForUser.toNumber()).toString()
   }
 
   public getAPYAfterStake(newValue: string, block: number): string {
+    invariant(+newValue !== 0, 'New value must > 0')
     const poolShare = new BigNumber(newValue)
       .plus(new BigNumber(this.user.amount ?? '0'))
-      .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.balance)))
+      .div(new BigNumber(newValue).plus(new BigNumber(this.poolInfo.pool.slpBalance)))
     const interestValue = new BigNumber(
       this.poolInfo.pool.rewardPerBlock * this.poolInfo.pool.sonePrice * poolShare.toNumber()
     )
@@ -38,7 +41,7 @@ export class UserInfo {
       .plus(new BigNumber(this.user.amount ?? '0'))
       .times(new BigNumber(this.poolInfo.pool.LPTokenPrice))
       .div(new BigNumber(1e18))
-    const roiPerBlock = interestValue.toNumber() / investValue.toNumber()
+    const roiPerBlock = investValue.eq('0') ? 0 : interestValue.toNumber() / investValue.toNumber()
     const multiplierYear = calculateAPY(this.poolInfo.pool.secondsPerBlock, block, this.poolInfo.configMasterFarmer)
     return (multiplierYear * roiPerBlock).toString()
   }
